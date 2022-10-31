@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func Provider[T any, CastAs any]() func() T {
+func Provider[T any]() func() T {
 	fullTypeName := fmt.Sprintf("%T", *new(T))
 
 	parts := strings.SplitAfter(fullTypeName, ".")

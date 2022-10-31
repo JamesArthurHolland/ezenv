@@ -10,7 +10,7 @@ type DbUrl string
 
 func TestParse(t *testing.T) {
 	os.Setenv("DB_URL", "localhost")
-	output := ezenv.Provider[DbUrl, string]()
+	output := ezenv.Provider[DbUrl]()
 
 	dbUrl := output()
 
