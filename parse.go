@@ -10,12 +10,10 @@ import (
 )
 
 func Provider[T any, CastAs any]() func() T {
-	log.Printf("are of type %T", *new(T))
 	fullTypeName := fmt.Sprintf("%T", *new(T))
 
 	parts := strings.SplitAfter(fullTypeName, ".")
 	envVarNameCamel := parts[len(parts)-1]
-	log.Println(envVarNameCamel)
 	str := stringy.New(envVarNameCamel)
 	snakeStr := str.SnakeCase("?", "")
 	envVarName := snakeStr.ToUpper()
