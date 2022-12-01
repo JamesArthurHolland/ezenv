@@ -51,20 +51,6 @@ func Provider[T any]() func() T {
 			intValue, err := strconv.ParseInt(value, 10, 64)
 			checkErr(err, fullTypeName)
 			e.SetInt(intValue)
-		case reflect.Slice:
-			if v.Field(0).Len() == 0 {
-				fmt.Println("empty slice")
-			}
-			switch v.Field(0).Index(0).Kind() {
-			case reflect.Int:
-				fmt.Println("int here")
-				// for i := 0; i < vof.Field(0).Len(); i++ {
-				// how to know this field is []int or []string?
-				// vof.Field(0).Index(i).Set()
-				// }
-			case reflect.String:
-				fmt.Println("string here")
-			}
 		default:
 			log.Fatalf("Not a string or int %s", fullTypeName)
 		}
