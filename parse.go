@@ -6,17 +6,29 @@ import (
 	"log"
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
 )
 
-func Provider[T any]() func() T {
-	fullTypeName := fmt.Sprintf("%T", *new(T))
+func getEnvVarName[T any](fullTypeName string) string {
 
 	parts := strings.SplitAfter(fullTypeName, ".")
 	envVarNameCamel := parts[len(parts)-1]
 	str := stringy.New(envVarNameCamel)
 	snakeStr := str.SnakeCase("?", "")
-	envVarName := snakeStr.ToUpper()
+	return snakeStr.ToUpper()
+}
+
+func checkErr(err error, fullTypeName string) {
+	if err != nil {
+		log.Fatalf("Error for %s = %s", fullTypeName, err)
+	}
+}
+
+func Provider[T any]() func() T {
+	fullTypeName := fmt.Sprintf("%T", *new(T))
+
+	envVarName := getEnvVarName[T](fullTypeName)
 
 	value := os.Getenv(envVarName)
 	if value == "" {
@@ -25,9 +37,80 @@ func Provider[T any]() func() T {
 
 	return func() T {
 		output := new(T)
-		v := reflect.ValueOf(output).Elem()
-		v.SetString(value)
+		v := reflect.ValueOf(output)
+		e := v.Elem()
+
+		switch e.Kind() {
+		case reflect.String:
+			e.SetString(value)
+		case reflect.Int32:
+			intValue, err := strconv.ParseInt(value, 10, 32)
+			checkErr(err, fullTypeName)
+			e.SetInt(intValue)
+		case reflect.Int, reflect.Int64:
+			intValue, err := strconv.ParseInt(value, 10, 64)
+			checkErr(err, fullTypeName)
+			e.SetInt(intValue)
+		case reflect.Slice:
+			if v.Field(0).Len() == 0 {
+				fmt.Println("empty slice")
+			}
+			switch v.Field(0).Index(0).Kind() {
+			case reflect.Int:
+				fmt.Println("int here")
+				// for i := 0; i < vof.Field(0).Len(); i++ {
+				// how to know this field is []int or []string?
+				// vof.Field(0).Index(i).Set()
+				// }
+			case reflect.String:
+				fmt.Println("string here")
+			}
+		default:
+			log.Fatalf("Not a string or int %s", fullTypeName)
+		}
 
 		return *output
+	}
+}
+
+func SliceProvider[S ~[]T, T any]() func() S {
+	fullTypeName := fmt.Sprintf("%T", *new(S))
+
+	envVarName := getEnvVarName[S](fullTypeName)
+
+	value := os.Getenv(envVarName)
+	if value == "" {
+		log.Fatalf("Var %s not present.", envVarName)
+	}
+
+	return func() S {
+		tNew := new(T)
+		v := reflect.ValueOf(tNew)
+
+		parts := strings.Split(value, ";")
+		outSlice := make([]T, len(parts))
+
+		switch v.Elem().Kind() {
+		case reflect.Int, reflect.Int64:
+			for i := 0; i < len(parts); i++ {
+				newElement := new(T)
+				intValue, err := strconv.ParseInt(parts[i], 10, 64)
+				checkErr(err, fullTypeName)
+				reflect.ValueOf(newElement).Elem().SetInt(intValue)
+				outSlice[i] = *newElement
+			}
+			log.Println("Is int")
+		case reflect.String:
+			for i := 0; i < len(parts); i++ {
+				newElement := new(T)
+				reflect.ValueOf(newElement).Elem().SetString(parts[i])
+				outSlice[i] = *newElement
+			}
+		default:
+			log.Println(reflect.TypeOf(tNew).Elem().Kind())
+			log.Fatalf("Not a string or int %s", fullTypeName)
+		}
+
+		return outSlice
 	}
 }
