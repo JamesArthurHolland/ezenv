@@ -15,6 +15,8 @@ at the top level, and then use dependency injection to wire the services togethe
 You'll probably have written code like this:
 
 ```
+// service.go
+
 type CorsAllowedOrigins []string
 type Port string
 
@@ -25,6 +27,7 @@ func NewHttpService(corsAllowedOrigins CorsAllowedOrigins, port Port) {
 }
 
 -----
+// main.go
 
 func GetPort() Port {
     port := os.Getenv("PORT")
@@ -56,6 +59,8 @@ The first function GetAllowedOrigins is boilerplate. Ezenv removes the need for 
 The above code becomes:
 
 ```
+// service.go
+
 type CorsAllowedOrigins []string
 type Port string
 
@@ -66,6 +71,7 @@ func NewHttpService(corsAllowedOrigins CorsAllowedOrigins, port Port) {
 }
 
 -----
+// main.go
 
 app := fx.New(
     fx.Provide(ezenv.Provider[Port]()),
