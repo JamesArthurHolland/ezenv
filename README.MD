@@ -61,7 +61,7 @@ app.Run()
 
 ## How it works
 
-The function ezenv.Provider[CorsAllowedOrigins]() return a provider, which is a function that returns a function which
+The function `ezenv.Provider\[CorsAllowedOrigins\]()` return a provider, which is a function that returns a function which
 has the specified type as a return value.
 
 When it is passed CorsAllowedOrigins, it will look for an env var named CORS_ALLOWED_ORIGINS. This is "magic", and so 
