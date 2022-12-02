@@ -30,11 +30,11 @@ func NewHttpService(corsAllowedOrigins CorsAllowedOrigins, ...) {
 }
 
 ...
-	app := fx.New(
-		fx.Provide(GetAllowedOrigins),
-		fx.Provide(NewHttpService),
-	)
-	app.Run()
+app := fx.New(
+    fx.Provide(GetAllowedOrigins),
+    fx.Provide(NewHttpService),
+)
+app.Run()
 
 ```
 
