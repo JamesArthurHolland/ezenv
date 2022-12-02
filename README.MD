@@ -59,11 +59,13 @@ The above code becomes:
 type CorsAllowedOrigins []string
 type Port string
 
+...
+
 func NewHttpService(corsAllowedOrigins CorsAllowedOrigins, port Port) {
    ...
 }
 
-...
+-----
 
 app := fx.New(
     fx.Provide(ezenv.Provider[Port]()),
