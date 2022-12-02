@@ -34,9 +34,8 @@ func TestParseIntArrayEnvVar(t *testing.T) {
 
 func TestParseStringArrayEnvVar(t *testing.T) {
 	os.Setenv("STRING_LIST", "Alice;Bob;Charlie")
-	output := ezenv.SliceProvider[StringList]()
 
-	parts := output()
+	parts := ezenv.SliceProvider[StringList]()()
 
 	if parts[0] != "Alice" || parts[1] != "Bob" || parts[2] != "Charlie" {
 		t.Error("parts slice elements should be {1, 2, 3}")

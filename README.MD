@@ -7,6 +7,8 @@ Ezenv uses golang generics to remove boilerplate surrounding retrieving ENV vars
 You specify a custom type, eg `type CorsAllowedOrigins []string` and it will map the semi-colon delimited ENV var 
 into that variable, throwing a fatal if the env var isn't set.
 
+It can be used in the context of Dependency Injection, or without DependencyInjection.
+
 ## Use case + example
 
 Oftentimes, when using frameworks such as [Uber Fx](https://github.com/uber-go/fx), you'll provision your services 
@@ -111,3 +113,17 @@ string
 
 []int, []int32, []int64   
 []string
+
+## Outside context of dependency injection
+
+```
+func TestParseStringArrayEnvVar(t *testing.T) {   
+    os.Setenv("STRING_LIST", "Alice;Bob;Charlie")   
+
+    parts := ezenv.SliceProvider[StringList]()()    // Note the double function call.
+
+    if parts[0] != "Alice" || parts[1] != "Bob" || parts[2] != "Charlie" {   
+        t.Error("parts slice elements should be {1, 2, 3}")   
+    }
+}
+```
