@@ -18,11 +18,13 @@ You'll probably have written code like this:
 type CorsAllowedOrigins []string
 type Port string
 
+...
+
 func NewHttpService(corsAllowedOrigins CorsAllowedOrigins, port Port) {
    ...
 }
 
-...
+-----
 
 func GetPort() Port {
     port := os.Getenv("PORT")
