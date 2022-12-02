@@ -16,6 +16,15 @@ You'll probably have written code like this:
 
 ```
 type CorsAllowedOrigins []string
+type Port string
+
+func GetPort() Port {
+    port := os.Getenv("PORT")
+    if port == "" {
+        log.Fatalln("PORT env var not set.")
+    }
+    return port
+}
 
 func GetAllowedOrigins() CorsAllowedOrigins {
     allowedOriginsString := os.Getenv("CORS_ALLOWED_ORIGINS")
@@ -31,6 +40,7 @@ func NewHttpService(corsAllowedOrigins CorsAllowedOrigins, ...) {
 
 ...
 app := fx.New(
+    fx.Provide(GetPort),
     fx.Provide(GetAllowedOrigins),
     fx.Provide(NewHttpService),
 )
@@ -53,6 +63,7 @@ func NewHttpService(corsAllowedOrigins CorsAllowedOrigins, ...) {
 
 app := fx.New(
     fx.Provide(ezenv.Provider[CorsAllowedOrigins]()),
+    fx.Provide(ezenv.SliceProvider[CorsAllowedOrigins]()),
     fx.Provide(NewHttpService),
 )
 app.Run()
@@ -61,8 +72,30 @@ app.Run()
 
 ## How it works
 
-The function `ezenv.Provider[CorsAllowedOrigins]()` return a provider, which is a function that returns a function which
-has the specified type as a return value.
+The function `ezenv.SliceProvider[CorsAllowedOrigins]()` returns a provider, which is a function that returns a 
+function which has the specified type as a return value.
 
 When it is passed CorsAllowedOrigins, it will look for an env var named CORS_ALLOWED_ORIGINS. This is "magic", and so 
 it's important to remember to have naming consistency.
+
+### ezenv.Provider\[T\]()
+
+Return a provider for custom type that is a builtin data type.
+
+### ezenv.SliceProvider\[T\]()
+
+Returns provider for custom type that is a slice of builtin data types.
+
+#### Supported types
+
+Currently has support for:
+
+##### Builtins
+
+int, int32, int64
+string
+
+##### Slices
+
+[]int, []int32, []int64
+[]string
