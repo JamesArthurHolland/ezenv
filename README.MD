@@ -4,8 +4,8 @@
 
 Ezenv uses golang generics to remove boilerplate surrounding retrieving ENV vars when initalising applications.
 
-You specify a custom type, eg `type CorsAllowedOrigins []string` and it will map the semi-colon delimited ENV var 
-into that variable, throwing a fatal if the env var isn't set.
+You specify a custom type, eg `type CorsAllowedOrigins []string` and it will map the semi-colon delimited env var
+CORS_ALLOWED_ORIGINS into that variable, throwing a fatal if the env var isn't set.
 
 It can be used in the context of Dependency Injection, or without DependencyInjection.
 
