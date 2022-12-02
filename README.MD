@@ -18,6 +18,12 @@ You'll probably have written code like this:
 type CorsAllowedOrigins []string
 type Port string
 
+func NewHttpService(corsAllowedOrigins CorsAllowedOrigins, port Port) {
+   ...
+}
+
+...
+
 func GetPort() Port {
     port := os.Getenv("PORT")
     if port == "" {
@@ -34,11 +40,6 @@ func GetAllowedOrigins() CorsAllowedOrigins {
     return strings.Split(allowedOriginsString, ";")
 }
 
-func NewHttpService(corsAllowedOrigins CorsAllowedOrigins, port Port) {
-   ...
-}
-
-...
 app := fx.New(
     fx.Provide(GetPort),
     fx.Provide(GetAllowedOrigins),
