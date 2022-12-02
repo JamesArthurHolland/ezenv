@@ -34,7 +34,7 @@ func GetAllowedOrigins() CorsAllowedOrigins {
     return strings.Split(allowedOriginsString, ";")
 }
 
-func NewHttpService(corsAllowedOrigins CorsAllowedOrigins, ...) {
+func NewHttpService(corsAllowedOrigins CorsAllowedOrigins, port Port) {
    ...
 }
 
@@ -54,15 +54,16 @@ The above code becomes:
 
 ```
 type CorsAllowedOrigins []string
+type Port string
 
-func NewHttpService(corsAllowedOrigins CorsAllowedOrigins, ...) {
+func NewHttpService(corsAllowedOrigins CorsAllowedOrigins, port Port) {
    ...
 }
 
 ...
 
 app := fx.New(
-    fx.Provide(ezenv.Provider[CorsAllowedOrigins]()),
+    fx.Provide(ezenv.Provider[Port]()),
     fx.Provide(ezenv.SliceProvider[CorsAllowedOrigins]()),
     fx.Provide(NewHttpService),
 )
