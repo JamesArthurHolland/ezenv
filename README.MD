@@ -53,7 +53,7 @@ func NewHttpService(corsAllowedOrigins CorsAllowedOrigins, ...) {
 
 app := fx.New(
     fx.Provide(ezenv.Provider[CorsAllowedOrigins]()),
-	fx.Provide(NewHttpService),
+    fx.Provide(NewHttpService),
 )
 app.Run()
 
