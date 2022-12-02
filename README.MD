@@ -92,10 +92,10 @@ Currently has support for:
 
 ##### Builtins
 
-int, int32, int64
+int, int32, int64   
 string
 
 ##### Slices
 
-[]int, []int32, []int64
+[]int, []int32, []int64   
 []string
