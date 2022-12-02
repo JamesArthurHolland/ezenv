@@ -78,11 +78,11 @@ function which has the specified type as a return value.
 When it is passed CorsAllowedOrigins, it will look for an env var named CORS_ALLOWED_ORIGINS. This is "magic", and so 
 it's important to remember to have naming consistency.
 
-### ezenv.Provider\[T\]()
+### `ezenv.Provider[T]()`
 
 Return a provider for custom type that is a builtin data type.
 
-### ezenv.SliceProvider\[T\]()
+### `ezenv.SliceProvider[T]()`
 
 Returns provider for custom type that is a slice of builtin data types.
 
