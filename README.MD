@@ -16,7 +16,7 @@ at the top level, and then use dependency injection to wire the services togethe
 
 You'll probably have written code like this:
 
-```
+```go
 // service.go
 
 type CorsAllowedOrigins []string
@@ -60,7 +60,7 @@ The first function GetAllowedOrigins is boilerplate. Ezenv removes the need for 
 
 The above code becomes:
 
-```
+```go
 // service.go
 
 type CorsAllowedOrigins []string
@@ -116,7 +116,7 @@ string
 
 ## When not using dependency injection
 
-```
+```go
 func TestParseStringArrayEnvVar(t *testing.T) {   
     os.Setenv("STRING_LIST", "Alice;Bob;Charlie")   
 
