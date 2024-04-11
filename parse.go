@@ -25,7 +25,7 @@ func checkErr(err error, fullTypeName string) {
 	}
 }
 
-func Provider[T any]() func() T {
+func Provider[T any]() T {
 	fullTypeName := fmt.Sprintf("%T", *new(T))
 
 	envVarName := getEnvVarName[T](fullTypeName)
@@ -35,31 +35,29 @@ func Provider[T any]() func() T {
 		log.Fatalf("Var %s not present.", envVarName)
 	}
 
-	return func() T {
-		output := new(T)
-		v := reflect.ValueOf(output)
-		e := v.Elem()
+	output := new(T)
+	v := reflect.ValueOf(output)
+	e := v.Elem()
 
-		switch e.Kind() {
-		case reflect.String:
-			e.SetString(value)
-		case reflect.Int32:
-			intValue, err := strconv.ParseInt(value, 10, 32)
-			checkErr(err, fullTypeName)
-			e.SetInt(intValue)
-		case reflect.Int, reflect.Int64:
-			intValue, err := strconv.ParseInt(value, 10, 64)
-			checkErr(err, fullTypeName)
-			e.SetInt(intValue)
-		default:
-			log.Fatalf("Not a string or int %s", fullTypeName)
-		}
-
-		return *output
+	switch e.Kind() {
+	case reflect.String:
+		e.SetString(value)
+	case reflect.Int32:
+		intValue, err := strconv.ParseInt(value, 10, 32)
+		checkErr(err, fullTypeName)
+		e.SetInt(intValue)
+	case reflect.Int, reflect.Int64:
+		intValue, err := strconv.ParseInt(value, 10, 64)
+		checkErr(err, fullTypeName)
+		e.SetInt(intValue)
+	default:
+		log.Fatalf("Not a string or int %s", fullTypeName)
 	}
+
+	return *output
 }
 
-func SliceProvider[S ~[]T, T any]() func() S {
+func SliceProvider[S ~[]T, T any]() S {
 	fullTypeName := fmt.Sprintf("%T", *new(S))
 
 	envVarName := getEnvVarName[S](fullTypeName)
@@ -69,34 +67,32 @@ func SliceProvider[S ~[]T, T any]() func() S {
 		log.Fatalf("Var %s not present.", envVarName)
 	}
 
-	return func() S {
-		tNew := new(T)
-		v := reflect.ValueOf(tNew)
+	tNew := new(T)
+	v := reflect.ValueOf(tNew)
 
-		parts := strings.Split(value, ";")
-		outSlice := make([]T, len(parts))
+	parts := strings.Split(value, ";")
+	outSlice := make([]T, len(parts))
 
-		switch v.Elem().Kind() {
-		case reflect.Int, reflect.Int64:
-			for i := 0; i < len(parts); i++ {
-				newElement := new(T)
-				intValue, err := strconv.ParseInt(parts[i], 10, 64)
-				checkErr(err, fullTypeName)
-				reflect.ValueOf(newElement).Elem().SetInt(intValue)
-				outSlice[i] = *newElement
-			}
-			log.Println("Is int")
-		case reflect.String:
-			for i := 0; i < len(parts); i++ {
-				newElement := new(T)
-				reflect.ValueOf(newElement).Elem().SetString(parts[i])
-				outSlice[i] = *newElement
-			}
-		default:
-			log.Println(reflect.TypeOf(tNew).Elem().Kind())
-			log.Fatalf("Not a string or int %s", fullTypeName)
+	switch v.Elem().Kind() {
+	case reflect.Int, reflect.Int64:
+		for i := 0; i < len(parts); i++ {
+			newElement := new(T)
+			intValue, err := strconv.ParseInt(parts[i], 10, 64)
+			checkErr(err, fullTypeName)
+			reflect.ValueOf(newElement).Elem().SetInt(intValue)
+			outSlice[i] = *newElement
 		}
-
-		return outSlice
+		log.Println("Is int")
+	case reflect.String:
+		for i := 0; i < len(parts); i++ {
+			newElement := new(T)
+			reflect.ValueOf(newElement).Elem().SetString(parts[i])
+			outSlice[i] = *newElement
+		}
+	default:
+		log.Println(reflect.TypeOf(tNew).Elem().Kind())
+		log.Fatalf("Not a string or int %s", fullTypeName)
 	}
+
+	return outSlice
 }
