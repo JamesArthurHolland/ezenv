@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func getEnvVarName(fullTypeName string) string {
+func getEnvVarName[T any](fullTypeName string) string {
 	log.Printf("Ezenv: Full type name: %s", fullTypeName)
 	parts := strings.SplitAfter(fullTypeName, ".")
 	envVarNameCamel := parts[len(parts)-1]
@@ -28,11 +28,12 @@ func checkErr(err error, fullTypeName string) {
 func Provider[T any]() T {
 	fullTypeName := fmt.Sprintf("%T", *new(T))
 
-	envVarName := getEnvVarName(fullTypeName)
+	envVarName := getEnvVarName[T](fullTypeName)
 
 	value := os.Getenv(envVarName)
 	if value == "" {
-		
+		log.Printf("Var %s not present.", envVarName)
+		return *new(T)
 	}
 
 	output := new(T)
