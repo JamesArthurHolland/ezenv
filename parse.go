@@ -11,7 +11,7 @@ import (
 )
 
 func getEnvVarName[T any](fullTypeName string) string {
-
+	log.Printf("Ezenv: Full type name: %s", fullTypeName)
 	parts := strings.SplitAfter(fullTypeName, ".")
 	envVarNameCamel := parts[len(parts)-1]
 	str := stringy.New(envVarNameCamel)
