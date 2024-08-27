@@ -51,8 +51,12 @@ func Provider[T any]() T {
 		intValue, err := strconv.ParseInt(value, 10, 64)
 		checkErr(err, fullTypeName)
 		e.SetInt(intValue)
+	case reflect.Bool:
+		boolValue, err := strconv.ParseBool(value)
+		checkErr(err, fullTypeName)
+		e.SetBool(boolValue)
 	default:
-		log.Fatalf("Not a string or int %s", fullTypeName)
+		log.Fatalf("Not a bool, string or int %s", fullTypeName)
 	}
 
 	return *output
@@ -90,9 +94,17 @@ func SliceProvider[S ~[]T, T any]() S {
 			reflect.ValueOf(newElement).Elem().SetString(parts[i])
 			outSlice[i] = *newElement
 		}
+	case reflect.Bool:
+		for i := 0; i < len(parts); i++ {
+			newElement := new(T)
+			boolValue, err := strconv.ParseBool(parts[i])
+			checkErr(err, fullTypeName)
+			reflect.ValueOf(newElement).Elem().SetBool(boolValue)
+			outSlice[i] = *newElement
+		}
 	default:
 		log.Println(reflect.TypeOf(tNew).Elem().Kind())
-		log.Fatalf("Not a string or int %s", fullTypeName)
+		log.Fatalf("Not a bool, string or int %s", fullTypeName)
 	}
 
 	return outSlice
