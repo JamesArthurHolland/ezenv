@@ -1,7 +1,7 @@
 package test
 
 import (
-	"github.com/JamesArthurHolland/ezenv/v2"
+	"github.com/JamesArthurHolland/ezenv"
 	"os"
 	"testing"
 )
