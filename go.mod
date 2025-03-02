@@ -1,4 +1,4 @@
-module github.com/JamesArthurHolland/ezenv
+module github.com/JamesArthurHolland/ezenv/v2
 
 go 1.18
 
