@@ -76,8 +76,8 @@ func NewHttpService(corsAllowedOrigins CorsAllowedOrigins, port Port) {
 // main.go
 
 app := fx.New(
-    fx.Provide(ezenv.Provider[Port]()),
-    fx.Provide(ezenv.SliceProvider[CorsAllowedOrigins]()),
+    fx.Provide(ezenv.Provider[Port]),
+    fx.Provide(ezenv.SliceProvider[CorsAllowedOrigins]),
     fx.Provide(NewHttpService),
 )
 app.Run()
@@ -92,13 +92,13 @@ function which has the specified type as a return value.
 When it is passed CorsAllowedOrigins, it will look for an env var named CORS_ALLOWED_ORIGINS. This is "magic", and so 
 it's important to remember to have naming consistency.
 
-### `ezenv.Provider[T]()`
+### `ezenv.Provider[T]`
 
-Return a provider for custom type that is a builtin data type.
+Return a custom type that is a builtin data type.
 
-### `ezenv.SliceProvider[T]()`
+### `ezenv.SliceProvider[T]`
 
-Returns provider for custom type that is a slice of builtin data types.
+Returns a custom type that is a slice of builtin data types.
 
 #### Supported types
 
@@ -120,7 +120,7 @@ string
 func TestParseStringArrayEnvVar(t *testing.T) {   
     os.Setenv("STRING_LIST", "Alice;Bob;Charlie")   
 
-    parts := ezenv.SliceProvider[StringList]()()    // Note the double function call.
+    parts := ezenv.SliceProvider[StringList]()
 
     if parts[0] != "Alice" || parts[1] != "Bob" || parts[2] != "Charlie" {   
         t.Error("parts slice elements should be {1, 2, 3}")   
