@@ -33,7 +33,7 @@ func Provider[T any]() (func() T, error) {
 
 	value := os.Getenv(envVarName)
 	if value == "" {
-		return nil, errors.New(fmt.Sprintf("Var %s not present.", envVarName))
+		return nil, errors.New(fmt.Sprintf("FATAL ERROR: Var %s not present.", envVarName))
 	}
 
 	return func() T {
@@ -67,7 +67,7 @@ func SliceProvider[S ~[]T, T any]() (func() S, error) {
 
 	value := os.Getenv(envVarName)
 	if value == "" {
-		return nil, errors.New(fmt.Sprintf("Slice var %s not present.", envVarName))
+		return nil, errors.New(fmt.Sprintf("FATAL ERROR: Slice var %s not present.", envVarName))
 	}
 
 	return func() S {
