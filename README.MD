@@ -86,19 +86,22 @@ app.Run()
 
 ## How it works
 
-The function `ezenv.SliceProvider[CorsAllowedOrigins]()` returns a provider, which is a function that returns a 
-function which has the specified type as a return value.
+The function `ezenv.SliceProvider[CorsAllowedOrigins]() ` returns a provider, which is a function that returns 2 output variables:
+- a function which has the specified type as a return value
+- secondly, an error
+
+
 
 When it is passed CorsAllowedOrigins, it will look for an env var named CORS_ALLOWED_ORIGINS. This is "magic", and so 
 it's important to remember to have naming consistency.
 
-### `ezenv.Provider[T]`
+### `provider, err := ezenv.Provider[T]`
 
-Return a custom type that is a builtin data type.
+Return a custom type that is a builtin data type, errors if not set.
 
-### `ezenv.SliceProvider[T]`
+### `provider, err := ezenv.SliceProvider[T]`
 
-Returns a custom type that is a slice of builtin data types.
+Returns a custom type that is a slice of builtin data types, errors if not set.
 
 #### Supported types
 
@@ -108,19 +111,24 @@ Currently has support for:
 
 int, int32, int64   
 string
+bool
 
 ##### Slices
 
 []int, []int32, []int64   
 []string
+[]bool
 
 ## When not using dependency injection
 
 ```go
 func TestParseStringArrayEnvVar(t *testing.T) {   
-    os.Setenv("STRING_LIST", "Alice;Bob;Charlie")   
-
-    parts := ezenv.SliceProvider[StringList]()
+    os.Setenv("STRING_LIST", "Alice;Bob;Charlie")
+	
+    parts, err := ezenv.SliceProvider[StringList]()
+    if err != nil {
+        t.Error("Should not error")
+    }
 
     if parts[0] != "Alice" || parts[1] != "Bob" || parts[2] != "Charlie" {   
         t.Error("parts slice elements should be {1, 2, 3}")   
