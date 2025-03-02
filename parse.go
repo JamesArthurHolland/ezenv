@@ -1,6 +1,7 @@
 package ezenv
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gobeam/stringy"
 	"log"
@@ -25,14 +26,14 @@ func checkErr(err error, fullTypeName string) {
 	}
 }
 
-func Provider[T any]() func() T {
+func Provider[T any]() (func() T, error) {
 	fullTypeName := fmt.Sprintf("%T", *new(T))
 
 	envVarName := getEnvVarName[T](fullTypeName)
 
 	value := os.Getenv(envVarName)
 	if value == "" {
-		log.Fatalf("Var %s not present.", envVarName)
+		return nil, errors.New(fmt.Sprintf("Var %s not present.", envVarName))
 	}
 
 	return func() T {
@@ -56,17 +57,17 @@ func Provider[T any]() func() T {
 		}
 
 		return *output
-	}
+	}, nil
 }
 
-func SliceProvider[S ~[]T, T any]() func() S {
+func SliceProvider[S ~[]T, T any]() (func() S, error) {
 	fullTypeName := fmt.Sprintf("%T", *new(S))
 
 	envVarName := getEnvVarName[S](fullTypeName)
 
 	value := os.Getenv(envVarName)
 	if value == "" {
-		log.Fatalf("Var %s not present.", envVarName)
+		return nil, errors.New(fmt.Sprintf("Slice var %s not present.", envVarName))
 	}
 
 	return func() S {
@@ -98,5 +99,5 @@ func SliceProvider[S ~[]T, T any]() func() S {
 		}
 
 		return outSlice
-	}
+	}, nil
 }

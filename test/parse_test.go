@@ -2,6 +2,7 @@ package test
 
 import (
 	"github.com/JamesArthurHolland/ezenv"
+	"log"
 	"os"
 	"testing"
 )
@@ -12,7 +13,11 @@ type StringList []string
 
 func TestParseSingleStringEnvVar(t *testing.T) {
 	os.Setenv("DB_URL", "localhost")
-	output := ezenv.Provider[DbUrl]()
+	output, err := ezenv.Provider[DbUrl]()
+
+	if err != nil {
+		t.Error("ezenv.Provider[DbUrl]() should not have error")
+	}
 
 	dbUrl := output()
 
@@ -23,7 +28,11 @@ func TestParseSingleStringEnvVar(t *testing.T) {
 
 func TestParseIntArrayEnvVar(t *testing.T) {
 	os.Setenv("NUMBERS_LIST", "1;2;3")
-	output := ezenv.SliceProvider[NumbersList]()
+	output, err := ezenv.SliceProvider[NumbersList]()
+
+	if err != nil {
+		t.Error("ezenv.SliceProvider[NumbersList]() should not have error")
+	}
 
 	parts := output()
 
@@ -35,7 +44,14 @@ func TestParseIntArrayEnvVar(t *testing.T) {
 func TestParseStringArrayEnvVar(t *testing.T) {
 	os.Setenv("STRING_LIST", "Alice;Bob;Charlie")
 
-	parts := ezenv.SliceProvider[StringList]()()
+	partsFunc, err := ezenv.SliceProvider[StringList]()
+
+	parts := partsFunc()
+	log.Print(parts)
+
+	if err != nil {
+		t.Error("ezenv.SliceProvider[StringList]() should not have error")
+	}
 
 	if parts[0] != "Alice" || parts[1] != "Bob" || parts[2] != "Charlie" {
 		t.Error("parts slice elements should be {Alice, Bob, Charlie}")
